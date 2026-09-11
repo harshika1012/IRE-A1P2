@@ -50,4 +50,8 @@ DOWNLOAD_URLS = {
     "ebnerd_predictions_example": "https://ebnerd-dataset.s3.eu-west-1.amazonaws.com/predictions_large_random.zip",
 }
 
-HYBRID_ALPHA = {"mind": 0.1, "ebnerd": 0.0}
+# ---- Behavioural feature engineering (Assignment 2, Part I Q1) ----
+N_RECENT_CLICKS = 10          # how many recent clicks to keep in point-in-time history
+RECENCY_HALF_LIFE_DAYS = 7.0  # exponential decay half-life for recency-weighted engagement
+COLD_START_MAX_CLICKS = 5     # <= this many prior clicks -> cold-start user (for later slicing)
+SESSION_GAP_MINUTES = 30.0    # inactivity gap that starts a new session where no session_id exists (MIND)

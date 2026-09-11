@@ -45,15 +45,19 @@ def _load_behaviors(split_dir):
             hist_rows.append((str(row["user_id"]), "mind", str(aid), row["time"]))
     history_df = pd.DataFrame(hist_rows, columns=["user_id", "dataset", "article_id", "timestamp"])
 
-    # exploded impressions (one row per candidate article)
+    # exploded impressions (one row per candidate article). MIND has no
+    # session_id or dwell-time signal (unlike EB-NeRD) -- keep the columns
+    # for schema parity but leave them null; src/behavioral_features.py
+    # derives session boundaries from a time-gap heuristic instead.
     imp_rows = []
     for _, row in df.iterrows():
         for pos, tok in enumerate(str(row["impressions"]).split()):
             aid, label = tok.rsplit("-", 1)
             imp_rows.append((str(row["impression_id"]), "mind", str(row["user_id"]), row["time"],
-                              str(aid), int(label), pos))
+                              str(aid), int(label), pos, None, None))
     impressions_df = pd.DataFrame(imp_rows, columns=[
-        "impression_id", "dataset", "user_id", "timestamp", "article_id", "clicked", "position"])
+        "impression_id", "dataset", "user_id", "timestamp", "article_id", "clicked", "position",
+        "session_id", "read_time"])
 
     return impressions_df, history_df
 

@@ -48,17 +48,22 @@ def _load_behaviors():
     df = pd.concat(dfs, ignore_index=True)
     df["impression_time"] = pd.to_datetime(df["impression_time"])
 
+    # session_id and read_time (seconds spent reading) are native to EB-NeRD
+    # and feed the session/dwell-time features in src/behavioral_features.py.
     imp_rows = []
     for _, row in df.iterrows():
         inview = row["article_ids_inview"]
         clicked = set(row["article_ids_clicked"]) if row["article_ids_clicked"] is not None else set()
         if inview is None:
             continue
+        session_id = row.get("session_id")
+        read_time = row.get("read_time")
         for pos, aid in enumerate(inview):
             imp_rows.append((str(row["impression_id"]), "ebnerd", str(row["user_id"]), row["impression_time"],
-                              str(aid), int(aid in clicked), pos))
+                              str(aid), int(aid in clicked), pos, session_id, read_time))
     impressions_df = pd.DataFrame(imp_rows, columns=[
-        "impression_id", "dataset", "user_id", "timestamp", "article_id", "clicked", "position"])
+        "impression_id", "dataset", "user_id", "timestamp", "article_id", "clicked", "position",
+        "session_id", "read_time"])
     return impressions_df
 
 
