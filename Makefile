@@ -1,4 +1,4 @@
-.PHONY: data features reranker nrms serving-benchmark test clean
+.PHONY: data features reranker nrms serving-benchmark extended-eval test clean
 
 data:
 	python build_pipeline.py --dataset all
@@ -14,6 +14,9 @@ nrms: features
 
 serving-benchmark: reranker
 	python run_serving_benchmark.py --dataset all
+
+extended-eval: reranker
+	python run_extended_eval.py --dataset all
 
 test:
 	pytest tests/ -q
